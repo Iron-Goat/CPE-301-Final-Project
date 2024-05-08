@@ -3,7 +3,7 @@
 //##################################################################################
 // Names
 // - Nathan Mcginnis
-// - 
+// - Chase Pruit
 // - Ian Goff
 //##################################################################################
 // Requirements
@@ -22,6 +22,9 @@
 #define RDA 0x80
 #define TBE 0x20 // <-- Lab 7,5 Values
 
+#include <LiquidCrystal.h>
+//HAVE TO DECIDE WHAT PINS TO USE FOR LCD
+
 // UART Pointers
 volatile unsigned char *myUCSR0A = (unsigned char *)0x00C0; // <-- Lab 7,5 Values
 volatile unsigned char *myUCSR0B = (unsigned char *)0x00C1;
@@ -39,6 +42,9 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+
+//for display - change inputs when we figure that out
+void = Display(int a, int b);
 
 }
 
@@ -68,4 +74,19 @@ void putChar(unsigned char U0pdata)
 {
   while((*myUCSR0A & TBE)==0);
   *myUDR0 = U0pdata;
+}
+
+void display(int a, int b){
+  
+lcd.begin(16, 2);
+lcd.setCursor(0,0);
+//Change temp to string that contains temps once we make it
+lcd.print(TEMP)
+lcd.setCursor(0, 8);
+//Change HUMIDITY to string that contains humidity once we make it
+lcd.print(HUMIDITY"%");
+lcd.setCursor(0, 1);
+//Change if statement vairables once we decide on them
+if(WATER_LEVEL_VARIABLE < INTERUPT_SPECIFICATIONS){
+lcd.print("Water Level Low!");
 }
