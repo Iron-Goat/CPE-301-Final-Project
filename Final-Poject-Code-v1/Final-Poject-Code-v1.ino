@@ -1,12 +1,14 @@
 // Final Poject Code v1
 // 4/25/24
+
 //##################################################################################
-// Names
+// ---NAMES---
 // - Nathan Mcginnis
 // - Chase Pruit
 // - Ian Goff
+
 //##################################################################################
-// Requirements
+// ---REQUIREMENTS---
 // [] Clock, time and date
 // [] Water sensor High/Low detection
 //    [] Serial output when Low
@@ -17,31 +19,69 @@
 // [] Stepper motor movement
 //    [] Reads High/Low for left and right, moves motor
 // [] Tempurature and humidity constant serial output
+
 //##################################################################################
+// ---DEFINITIONS---
 
 #define RDA 0x80
 #define TBE 0x20 // <-- Lab 7,5 Values
 
 #include <LiquidCrystal.h>
-//HAVE TO DECIDE WHAT PINS TO USE FOR LCD
+//LCD Display
 
 #include <RTClib.h>
 //Library for clock
 
-// UART Pointers
+// ---LCD VARIABLES---
+INTERUPT_SPECIFICATIONS = 0;
+
+// ---WATER SENSOR VARIABLES---
+int tempwatervalue = 0;
+int waterthreshold = 0;
+
+//##################################################################################
+/* ---PINS---
+
+WATER SENSOR
+A15
+
+LCD DISPLAY
+//HAVE TO DECIDE WHAT PINS TO USE FOR LCD
+
+STEPER MOTOR
+
+DC MOTOR
+
+*/
+//##################################################################################
+// ---POINTERS---
+// Helps with pin mapping -->https://docs.arduino.cc/retired/hacking/hardware/PinMapping2560/
+
+// UART PPOINTERS
 volatile unsigned char *myUCSR0A = (unsigned char *)0x00C0; // <-- Lab 7,5 Values
 volatile unsigned char *myUCSR0B = (unsigned char *)0x00C1;
 volatile unsigned char *myUCSR0C = (unsigned char *)0x00C2;
 volatile unsigned int  *myUBRR0  = (unsigned int *) 0x00C4;
 volatile unsigned char *myUDR0   = (unsigned char *)0x00C6;
 
+// TIMER POINTERS
+
+
+// WATER SENSOR POINTER
+/*
+volatile unsigned char* port_watersensor = (unsigned char*) 0x; 
+volatile unsigned char* ddr_watersensor  = (unsigned char*) 0x; 
+volatile unsigned char* pin_watersensor  = (unsigned char*) 0x;
+*/
+//##################################################################################
+
 RTC_DS1307 rtc;
 
 void setup() {
+  U0Init(9600); // Start the UART
 
-  
-  // Start the UART
-  U0Init(9600);
+  // Water Sensor Setup
+  *ddr_watersensor &= 0xEF; //sets PK7(A15) to inupit
 }
 
 void loop() {
@@ -56,9 +96,7 @@ void = Clock(int a);
 
 }
 
-/*
- * UART FUNCTIONS
- */
+//UART FUNCTIONS
 void U0Init(int U0baud)
 {
  unsigned long FCPU = 16000000;
@@ -119,4 +157,20 @@ Serial.print(":");
 Serial.print(time.year(), DEC);
 //}
 
+}
+
+void water.sensor(){
+  // int return?
+
+    //tempwatervalue = analogRead();
+
+    if (tempwatervalue > waterthreshold) {
+        WATER_LEVEL_VARIABLE = 1;
+      } 
+
+    else {
+        WATER_LEVEL_VARIABLE = 0;
+      }
+
+      return WATER_LEVEL_VARIABLE;
 }
