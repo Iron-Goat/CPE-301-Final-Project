@@ -144,17 +144,16 @@ Interupt = false;
 //runs code when button is pressed and was previously giving 0
 if (ButtonState = true/*&& !previousState*/){
   *YELLOW &= ~(1 << PH4); //turns off yellow LED
-  *GREEN |= (1 << PE3); //turns on green LED
 //for display - change inputs when we figure that out
 temp = fanControl();
-void = Display(int a, int b);
+void = Display(int temp, int b);
 ventControl();
 
-//STILL NEED TO ADD BLUE CONDITIONS
 }
 else{
 *GREEN &= ~(1 << PE3); //turns off yellow LED
 *YELLOW |= (1 << PH4); //TURNS on yellow LED
+*BLUE &= ~(1 << PG5); //turns off blue LED
 }
 
 //previousState = ButtonState;
@@ -185,12 +184,12 @@ void putChar(unsigned char U0pdata)
   *myUDR0 = U0pdata;
 }
 
-void display(int a, int b){
+void display(int temp, int b){
   
 lcd.begin(16, 2);
 lcd.setCursor(0,0);
 //Change temp to string that contains temps once we make it
-lcd.print(TEMP)
+lcd.print(temp)
 lcd.setCursor(0, 8);
 //Change HUMIDITY to string that contains humidity once we make it
 lcd.print(HUMIDITY"%");
@@ -274,9 +273,13 @@ int  fanControl(){
 
   if(temp >> 25){
     digitalWrite(PIN_FAN, HIGH); //Sends power to relay to popwer DC fan motor from external power source
+  *GREEN &= ~(1 << PE3); //turns off green LED
+  *BLUE |= (1 << PG5); //turns on blue LED
   }
   else(){
     digitalWrite(PIN_FAN, LOW)
+  *BLUE &= ~(1 << PG5); //turns off blue LED
+  *GREEN |= (1 << PE3); //turns on green LED
   }
   return temp;
 }
