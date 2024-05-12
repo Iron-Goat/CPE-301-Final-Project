@@ -26,7 +26,8 @@
 #define RDA 0x80
 #define TBE 0x20 // <-- Lab 7,5 Values
 
-#include <LiquidCrystal.h>
+#include <LiquidCrystal.h>	
+#include <Arduino_SensorKit.h>
 //LCD Display
 
 //#include <RTClib.h>
@@ -42,7 +43,8 @@ volatile unsigned int tempwatervalue = 0;
 int waterthreshold = 0;
 int ventPos = 0;
 int temp = 0;
- int WATER_LEVEL_VARIABLE = 0;
+int WATER_LEVEL_VARIABLE = 0;
+int hum = 0;
 //##################################################################################
 /* ---PINS---
 Start/Stop
@@ -186,7 +188,8 @@ if (ButtonState = true/*&& !previousState*/){
   *YELLOW &= ~(1 << PH4); //turns off yellow LED
 //for display - change inputs when we figure that out
 temp = fanControl();
-void = Display(int temp, int b);
+hum = humidity();
+void = Display(int temp, int hum);
 ventControl();
 
 }
@@ -233,12 +236,13 @@ lcd.setCursor(0,0);
 lcd.print(temp)
 lcd.setCursor(0, 8);
 //Change HUMIDITY to string that contains humidity once we make it
-lcd.print(HUMIDITY"%");
+lcd.print(hum);
 lcd.setCursor(0, 1);
 //Change if statement vairables once we decide on them
 if(WATER_LEVEL_VARIABLE < INTERUPT_SPECIFICATIONS){
 lcd.print("Water Level Low!");
-}}
+}
+}
 
 void Clock(){
 
@@ -363,4 +367,9 @@ unsigned int adc_read(unsigned char adc_channel_num)
   while((*my_ADCSRA & 0x40) != 0);
   // return the result in the ADC data register
   return *my_ADC_DATA;
+}
+
+int humidity(){
+  hum = Environment.readHumidity();
+  return hum;
 }
