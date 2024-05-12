@@ -44,6 +44,8 @@ int ventPos = 0;
 
 //##################################################################################
 /* ---PINS---
+Start/Stop
+2
 
 WATER SENSOR
 A15
@@ -92,7 +94,7 @@ void setup() {
 
   //sets interup to trigger for rising edge)
 EICRA |= (1 << ISC01);
-EICRA |= (1 << ISC00);
+EICRA &= ~(1 << ISC00);
 EIMSK |= (1 << INTO); //Sets interupt to pin 2
 
   // Water Sensor Setup
