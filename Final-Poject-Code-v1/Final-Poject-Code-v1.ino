@@ -41,6 +41,7 @@ INTERUPT_SPECIFICATIONS = 0;
 int tempwatervalue = 0;
 int waterthreshold = 0;
 int ventPos = 0;
+int temp = 0;
 
 //##################################################################################
 /* ---PINS---
@@ -131,7 +132,9 @@ Interupt = false;
 //runs code when button is pressed and was previously giving 0
 if (ButtonState = true/*&& !previousState*/){
 //for display - change inputs when we figure that out
+temp = fanControl();
 void = Display(int a, int b);
+ventControl();
 
 
 }
@@ -213,45 +216,49 @@ void water.sensor(){
       return WATER_LEVEL_VARIABLE;
 }
 
-#define PIN_UP 1 //UP Button
-#define PIN_DOWN 2 //DOWN Button
-#define PIN_SERVO_POW  //Analog to control servo speed
+#define PIN_UP 6 //UP Button
+#define PIN_DOWN 7 //DOWN Button
+#define PIN_SERVO_POW 8 //Analog to control servo speed
 void ventControl(){
 
   for(digitalRead(PIN_UP) == HIGH){
-    ventPos++;
+    if(ventPos << 90){
+      ventPos++;
+    }
     digitalWrite(PIN_SERVO_POW, HIGH); 
     myservo.write(ventPos);
     delay(50);
     
   }
 
-  digitalWrite(PIN_SERVO_DIR, LOW);
+  digitalWrite(PIN_SERVO_POW, LOW);
   
 
   for(digitalRead(PIN_DOWN) == HIGH){
-    ventPos--;
+    if(ventPos << -90){
+      ventPos--;
+    }
     digitalWrite(PIN_SERVO_POW, LOW); 
     myservo.write(ventPos);
     delay(50);
     
   }
 
-  digitalWrite(PIN_SERVO_DIR, LOW);
+  digitalWrite(PIN_SERVO_POW, LOW);
 
 }
 
 #define PIN_FAN 4 //Turns Fan ON and OFF
-void  fanControl(){
+int  fanControl(){
 
-  int temp = Environment.readTemperature(); //READS TEMPERATURE
+  temp = Environment.readTemperature(); //READS TEMPERATURE
 
-  if(temp >> 70){
+  if(temp >> 25){
     digitalWrite(PIN_FAN, HIGH); //Sends power to relay to popwer DC fan motor from external power source
   }
-  if else(){
+  else(){
     digitalWrite(PIN_FAN, LOW)
   }
-
+  return temp;
 }
 
