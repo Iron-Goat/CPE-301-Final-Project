@@ -78,10 +78,22 @@ volatile unsigned char* pin_watersensor  = (unsigned char*) 0x;
 */
 //##################################################################################
 
+//Start/Stop Pointers
+volatile unsigned char *const Button = (volatile unsigned char *)0x2D;
+DDRE &= ~(1 << PE5); //sets PWM 2 pin as an input
+bool previousState = false;
+volatile bool Interupt = false;
+
+//For LCD
 RTC_DS1307 rtc;
 
 void setup() {
   U0Init(9600); // Start the UART
+
+  //sets interup to trigger for rising edge)
+EICRA |= (1 << ISC01);
+EICRA |= (1 << ISC00);
+EIMSK |= (1 << INTO); //Sets interupt to pin 2
 
   // Water Sensor Setup
   *ddr_watersensor &= 0xEF; //sets PK7(A15) to inupit
@@ -99,17 +111,24 @@ void setup() {
 }
 
 void loop() {
-  
 
+  if(Interupt){
+void = Clock();
+Interupt = false;
+  }
+
+//for start/stop
+bool ButtonState = (*Button & (1 << PE4)) != 0;
+
+//runs code when button is pressed and was previously giving 0
+if (ButtonState && !previousState){
 //for display - change inputs when we figure that out
 void = Display(int a, int b);
 
-//for clock - change inputs once we figure out start button pointer
-void = Clock(int a);
-
 
 }
-
+previousState = ButtonState;
+}
 //UART FUNCTIONS
 void U0Init(int U0baud)
 {
@@ -151,12 +170,10 @@ if(WATER_LEVEL_VARIABLE < INTERUPT_SPECIFICATIONS){
 lcd.print("Water Level Low!");
 }}
 
-void Clock(int a){
+void Clock(){
 
 DateTime time = rct.now();
-//ADD CHANGES FOR VARIABLE ONCE WE FIGURE IT OUT!!
-//CHANGE START CONDITIONS SO THAT THIS RUNS ONCE PER STOP AND ONCE AGAIN PER START
-//if(theortical pointer = 1){
+
 Serial.printLn(Time);
 Serial.print(time.hour(), DEC);
 Serial.print(":");
@@ -169,7 +186,6 @@ Serial.print(":");
 Serial.print(time.month(), DEC);
 Serial.print(":");
 Serial.print(time.year(), DEC);
-//}
 
 }
 
