@@ -102,6 +102,9 @@ volatile unsigned char *const YELLOW = (volatile unsigned char *)0x101;
 volatile unsigned char *const GREEN = (volatile unsigned char *)0x2D;
 volatile unsigned char *const BLUE = (volatile unsigned char *)0x33;
 
+//LCD
+const int rs = 32, en = 30, d4 = 28, d6 = 26, d7 = 24;
+LiguidCystal lcd(rs, en, d4, d6, d7);
 
 
 void setup() {
@@ -123,7 +126,7 @@ EIMSK |= (1 << INTO); //Sets interupt to pin 2
   pinMode(PIN_UP, INPUT);
   pinMode(PIN_DOWN, INPUT);
   pinMode(PIN_SERVO_POW, OUTPUT);
-  myservo.attach(4);
+  myservo.attach(11);
   pinMode(PIN_FAN, OUTPUT);
   
   //sets up pins for lights
@@ -131,7 +134,11 @@ DDRH |= (1 << PH4); //sets PIN 7 as an output for yellow
 DDRE |= (1 << PE3); //sets PIN 5 as an output for green
 DDRG |= (1 << PG5); //sets PIN 4 as an output for blue
 
+
+
 }
+
+
 
 unsigned int adctoprint(int printflag = 0) //ADC water sensor value 'filter'
 {
@@ -219,6 +226,7 @@ void putChar(unsigned char U0pdata)
 
 void display(int temp, int b){
   
+  
 lcd.begin(16, 2);
 lcd.setCursor(0,0);
 //Change temp to string that contains temps once we make it
@@ -267,7 +275,7 @@ void watersensor(){
 }
 
 #define PIN_UP 6 //UP Button
-#define PIN_DOWN 7 //DOWN Button
+#define PIN_DOWN 9 //DOWN Button
 #define PIN_SERVO_POW 8 //Analog to control servo speed
 void ventControl(){
 
