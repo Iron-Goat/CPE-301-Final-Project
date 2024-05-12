@@ -32,12 +32,15 @@
 #include <RTClib.h>
 //Library for clock
 
+#include <Servo.h>
+
 // ---LCD VARIABLES---
 INTERUPT_SPECIFICATIONS = 0;
 
 // ---WATER SENSOR VARIABLES---
 int tempwatervalue = 0;
 int waterthreshold = 0;
+int ventPos = 0;
 
 //##################################################################################
 /* ---PINS---
@@ -82,6 +85,17 @@ void setup() {
 
   // Water Sensor Setup
   *ddr_watersensor &= 0xEF; //sets PK7(A15) to inupit
+
+  //Needs to be changed to UART
+  Serial.begin(9600);
+  Environment.begin();
+
+  pinMode(PIN_UP, INPUT);
+  pinMode(PIN_DOWN, INPUT);
+  pinMode(PIN_SERVO_POW, OUTPUT);
+  myservo.attach(4);
+  pinMode(PIN_FAN, OUTPUT);
+  
 }
 
 void loop() {
@@ -174,3 +188,46 @@ void water.sensor(){
 
       return WATER_LEVEL_VARIABLE;
 }
+
+#define PIN_UP 1 //UP Button
+#define PIN_DOWN 2 //DOWN Button
+#define PIN_SERVO_POW  //Analog to control servo speed
+void ventControl(){
+
+  for(digitalRead(PIN_UP) == HIGH){
+    ventPos++;
+    digitalWrite(PIN_SERVO_POW, HIGH); 
+    myservo.write(ventPos);
+    delay(50);
+    
+  }
+
+  digitalWrite(PIN_SERVO_DIR, LOW);
+  
+
+  for(digitalRead(PIN_DOWN) == HIGH){
+    ventPos--;
+    digitalWrite(PIN_SERVO_POW, LOW); 
+    myservo.write(ventPos);
+    delay(50);
+    
+  }
+
+  digitalWrite(PIN_SERVO_DIR, LOW);
+
+}
+
+#define PIN_FAN 4 //Turns Fan ON and OFF
+void  fanControl(){
+
+  int temp = Environment.readTemperature(); //READS TEMPERATURE
+
+  if(temp >> 70){
+    digitalWrite(PIN_FAN, HIGH); //Sends power to relay to popwer DC fan motor from external power source
+  }
+  if else(){
+    digitalWrite(PIN_FAN, LOW)
+  }
+
+}
+
