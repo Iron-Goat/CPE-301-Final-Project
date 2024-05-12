@@ -90,6 +90,13 @@ volatile bool Interupt = false;
 //For LCD
 RTC_DS1307 rtc;
 
+//CODE FOR LIGHT PIN'S OUTPUTS
+volatile unsigned char *const YELLOW = (volatile unsigned char *)0x101;
+volatile unsigned char *const GREEN = (volatile unsigned char *)0x2D;
+volatile unsigned char *const BLUE = (volatile unsigned char *)0x33;
+
+
+
 void setup() {
   U0Init(9600); // Start the UART
 
@@ -111,6 +118,11 @@ EIMSK |= (1 << INTO); //Sets interupt to pin 2
   myservo.attach(4);
   pinMode(PIN_FAN, OUTPUT);
   
+  //sets up pins for lights
+DDRH |= (1 << PH4); //sets PIN 7 as an output for yellow
+DDRE |= (1 << PE3); //sets PIN 5 as an output for green
+DDRG |= (1 << PG5); //sets PIN 4 as an output for blue
+
 }
 
 void loop() {
@@ -131,13 +143,20 @@ Interupt = false;
 
 //runs code when button is pressed and was previously giving 0
 if (ButtonState = true/*&& !previousState*/){
+  *YELLOW &= ~(1 << PH4); //turns off yellow LED
+  *GREEN |= (1 << PE3); //turns on green LED
 //for display - change inputs when we figure that out
 temp = fanControl();
 void = Display(int a, int b);
 ventControl();
 
-
+//STILL NEED TO ADD BLUE CONDITIONS
 }
+else{
+*GREEN &= ~(1 << PE3); //turns off yellow LED
+*YELLOW |= (1 << PH4); //TURNS on yellow LED
+}
+
 //previousState = ButtonState;
 }
 //UART FUNCTIONS
