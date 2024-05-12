@@ -82,7 +82,7 @@ volatile unsigned char* pin_watersensor  = (unsigned char*) 0x;
 
 //Start/Stop Pointers
 volatile unsigned char *const Button = (volatile unsigned char *)0x2D;
-DDRE &= ~(1 << PE5); //sets PWM 2 pin as an input
+DDRE &= ~(1 << PE4); //sets PWM 2 pin as an input
 bool previousState = false;
 volatile bool Interupt = false;
 
