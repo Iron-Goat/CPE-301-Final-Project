@@ -83,7 +83,7 @@ volatile unsigned char* pin_watersensor  = (unsigned char*) 0x;
 //Start/Stop Pointers
 volatile unsigned char *const Button = (volatile unsigned char *)0x2D;
 DDRE &= ~(1 << PE4); //sets PWM 2 pin as an input
-bool previousState = false;
+//bool previousState = false;
 volatile bool Interupt = false;
 
 //For LCD
@@ -116,20 +116,26 @@ void loop() {
 
   if(Interupt){
 void = Clock();
+if (ButtonState = true){
+ButtonState = false;
+}
+else{
+  ButtonState = true;
+}
 Interupt = false;
   }
 
 //for start/stop
-bool ButtonState = (*Button & (1 << PE4)) != 0;
+//bool ButtonState = (*Button & (1 << PE4)) != 0;
 
 //runs code when button is pressed and was previously giving 0
-if (ButtonState && !previousState){
+if (ButtonState = true/*&& !previousState*/){
 //for display - change inputs when we figure that out
 void = Display(int a, int b);
 
 
 }
-previousState = ButtonState;
+//previousState = ButtonState;
 }
 //UART FUNCTIONS
 void U0Init(int U0baud)
