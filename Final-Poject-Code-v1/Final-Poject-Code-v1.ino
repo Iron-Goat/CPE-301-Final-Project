@@ -1,4 +1,4 @@
-// Final Poject Code v4
+// Final Poject Code v5
 // 4/25/24
 
 //##################################################################################
@@ -30,7 +30,7 @@
 #include <Arduino_SensorKit.h>
 //LCD Display
 
-//#include <RTClib.h>
+#include <RTClib.h>
 //Library for clock
 
 #include <Servo.h>
@@ -45,22 +45,7 @@ int ventPos = 0;
 int temp = 0;
 int WATER_LEVEL_VARIABLE = 0;
 int hum = 0;
-//##################################################################################
-/* ---PINS---
-Start/Stop
-2
 
-WATER SENSOR
-A1
-
-LCD DISPLAY
-//HAVE TO DECIDE WHAT PINS TO USE FOR LCD
-
-STEPER MOTOR
-
-DC MOTOR
-
-*/
 //##################################################################################
 // ---POINTERS---
 // Helps with pin mapping -->https://docs.arduino.cc/retired/hacking/hardware/PinMapping2560/
@@ -72,16 +57,6 @@ volatile unsigned char *myUCSR0C = (unsigned char *)0x00C2;
 volatile unsigned int  *myUBRR0  = (unsigned int *) 0x00C4;
 volatile unsigned char *myUDR0   = (unsigned char *)0x00C6;
 
-// TIMER POINTERS
-
-
-// WATER SENSOR POINTER
-/*
-volatile unsigned char* port_watersensor = (unsigned char*) 0x; 
-volatile unsigned char* ddr_watersensor  = (unsigned char*) 0x; 
-volatile unsigned char* pin_watersensor  = (unsigned char*) 0x;
-*/
-
 // ADC POINTERS
 volatile unsigned char* my_ADMUX = (unsigned char*) 0x7C;
 volatile unsigned char* my_ADCSRB = (unsigned char*) 0x7B;
@@ -92,7 +67,8 @@ volatile unsigned int* my_ADC_DATA = (unsigned int*) 0x78;
 
 //Start/Stop Pointers
 volatile unsigned char *const Button = (volatile unsigned char *)0x2D;
-DDRE &= ~(1 << PE4); //sets PWM 2 pin as an input
+volatile unsigned char* my_DDRE = (unsigned char*)  0x06;
+my_DDRE &= ~(1 << PE4); //sets PWM 2 pin as an input
 //bool previousState = false;
 volatile bool Interupt = false;
 
@@ -104,9 +80,9 @@ volatile unsigned char *const YELLOW = (volatile unsigned char *)0x101;
 volatile unsigned char *const GREEN = (volatile unsigned char *)0x2D;
 volatile unsigned char *const BLUE = (volatile unsigned char *)0x33;
 
-//LCD
-const int rs = 32, en = 30, d4 = 28, d6 = 26, d7 = 24;
-LiguidCystal lcd(rs, en, d4, d6, d7);
+// LCD pins <--> Arduino pins
+const int RS = 11, EN = 12, D4 = 2, D5 = 3, D6 = 4, D7 = 5;
+LiquidCrystal lcd(RS, EN, D4, D5, D6, D7);
 
 
 void setup() {
@@ -118,12 +94,11 @@ EICRA &= ~(1 << ISC00);
 EIMSK |= (1 << INTO); //Sets interupt to pin 2
 
   // Water Sensor Setup
-  *ddr_watersensor &= 0xEF; //sets PK7(A15) to inupit
   adc_init();
 
   //Needs to be changed to UART
   Serial.begin(9600);
-  Environment.begin();
+  //Environment.begin();
 
   pinMode(PIN_UP, INPUT);
   pinMode(PIN_DOWN, INPUT);
@@ -189,6 +164,7 @@ if (ButtonState = true/*&& !previousState*/){
 //for display - change inputs when we figure that out
 temp = fanControl();
 hum = humidity();
+watersensor();
 void = Display(int temp, int hum);
 ventControl();
 
@@ -233,16 +209,16 @@ void display(int temp, int b){
 lcd.begin(16, 2);
 lcd.setCursor(0,0);
 //Change temp to string that contains temps once we make it
-lcd.print(temp)
+lcd.print(temp);
 lcd.setCursor(0, 8);
 //Change HUMIDITY to string that contains humidity once we make it
 lcd.print(hum);
 lcd.setCursor(0, 1);
 //Change if statement vairables once we decide on them
-if(WATER_LEVEL_VARIABLE < INTERUPT_SPECIFICATIONS){
-lcd.print("Water Level Low!");
+//if(WATER_LEVEL_VARIABLE < INTERUPT_SPECIFICATIONS){
+//lcd.print("Water Level Low!");
 }
-}
+
 
 void Clock(){
 
@@ -262,6 +238,10 @@ Serial.print(":");
 Serial.print(time.year(), DEC);
 
 }
+void time.hour(){}
+void time.day(){}
+void time.month(){}
+void time.year(){}
 
 void watersensor(){
     adc_read(1); //<-- Sets the input pin (A1)
@@ -309,6 +289,8 @@ void ventControl(){
   digitalWrite(PIN_SERVO_POW, LOW);
 
 }
+
+void Environment.readTemperature(){}
 
 #define PIN_FAN 4 //Turns Fan ON and OFF
 int  fanControl(){
@@ -368,6 +350,8 @@ unsigned int adc_read(unsigned char adc_channel_num)
   // return the result in the ADC data register
   return *my_ADC_DATA;
 }
+
+void Environment.readHumidity(){}
 
 int humidity(){
   hum = Environment.readHumidity();
