@@ -34,6 +34,7 @@
 //Library for clock
 
 #include <Servo.h>
+Servo myservo;
 
 // ---LCD VARIABLES---
 int INTERUPT_SPECIFICATIONS = 0;
@@ -45,6 +46,7 @@ int ventPos = 0;
 int temp = 0;
 int WATER_LEVEL_VARIABLE = 0;
 int hum = 0;
+
 
 //##################################################################################
 // ---POINTERS---
@@ -111,7 +113,10 @@ DDRH |= (1 << PH4); //sets PIN 7 as an output for yellow
 DDRE |= (1 << PE3); //sets PIN 5 as an output for green
 DDRG |= (1 << PG5); //sets PIN 4 as an output for blue
 
-
+  pinMode(6, INPUT);
+  pinMode(9, INPUT);
+  pinMode(8, OUTPUT);
+  myservo.attach(11);
 
 }
 
@@ -258,35 +263,33 @@ void watersensor(){
       return WATER_LEVEL_VARIABLE;
 }
 
-#define PIN_UP 6 //UP Button
-#define PIN_DOWN 9 //DOWN Button
-#define PIN_SERVO_POW 8 //Analog to control servo speed
+
 void ventControl(){
 
-  for(digitalRead(PIN_UP) == HIGH){
+  while(digitalRead(6) == HIGH){
     if(ventPos << 90){
       ventPos++;
     }
-    digitalWrite(PIN_SERVO_POW, HIGH); 
+    digitalWrite(8, HIGH); 
     myservo.write(ventPos);
-    delay(50);
+    delay(15);
     
   }
 
-  digitalWrite(PIN_SERVO_POW, LOW);
+  digitalWrite(8, LOW);
   
 
-  for(digitalRead(PIN_DOWN) == HIGH){
+  while(digitalRead(9) == HIGH){
     if(ventPos << -90){
       ventPos--;
     }
-    digitalWrite(PIN_SERVO_POW, LOW); 
+    digitalWrite(8, HIGH); 
     myservo.write(ventPos);
-    delay(50);
+    delay(15);
     
   }
 
-  digitalWrite(PIN_SERVO_POW, LOW);
+  digitalWrite(8, LOW);
 
 }
 
@@ -297,7 +300,7 @@ int  fanControl(){
 
   temp = Environment.readTemperature(); //READS TEMPERATURE
 
-  if(temp >> 25){
+  if(temp >> 23){
     digitalWrite(PIN_FAN, HIGH); //Sends power to relay to popwer DC fan motor from external power source
   *GREEN &= ~(1 << PE3); //turns off green LED
   *BLUE |= (1 << PG5); //turns on blue LED
