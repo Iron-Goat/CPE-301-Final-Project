@@ -1,4 +1,4 @@
-// Final Poject Code v6
+// Final Poject Code v7
 // 5/12/24
 
 //##################################################################################
@@ -228,19 +228,18 @@ lcd.setCursor(0, 1);
 void Clock(){
 
 DateTime Time = rct.now();
-
-Serial.printLn(Time);
-Serial.print(time.hour(), DEC);
-Serial.print(":");
-Serial.print(time.minute(), DEC);
-Serial.print(":");
-Serial.print(time.second(), DEC);
-Serial.printLn(Date);
-Serial.print(time.day(), DEC);
-Serial.print(":");
-Serial.print(time.month(), DEC);
-Serial.print(":");
-Serial.print(time.year(), DEC);
+putChar(Time);
+putChar(time.hour(), DEC);
+putChar(":");
+putChar(time.minute(), DEC);
+putChar(":");
+putChar(time.second(), DEC);
+putChar(Date);
+putChar(time.day(), DEC);
+putChar(":");
+putChar(time.month(), DEC);
+putChar(":");
+putChar(time.year(), DEC);
 
 }
 
@@ -259,33 +258,35 @@ void watersensor(){
       return WATER_LEVEL_VARIABLE;
 }
 
-
+volatile unsigned char *portVentFan = (unsigned char*)  0x15;
+*portVentFan |= 0x40; //output fan pin to LOW
+*portVentFan ^= 0x40; // XOR to toggle on
 void ventControl(){
 
   while(digitalRead(6) == HIGH){
     if(ventPos << 90){
       ventPos++;
     }
-    digitalWrite(8, HIGH); 
+    *portVentFan ^= 0x40; // XOR to toggle on
     myservo.write(ventPos);
     delay(15);
     
   }
 
-  digitalWrite(8, LOW);
+  *portVentFan |= 0x40; //output fan pin to LOW
   
 
   while(digitalRead(9) == HIGH){
     if(ventPos << -90){
       ventPos--;
     }
-    digitalWrite(8, HIGH); 
+    *portVentFan ^= 0x40; // XOR to toggle on
     myservo.write(ventPos);
     delay(15);
     
   }
 
-  digitalWrite(8, LOW);
+   *portVentFan |= 0x40; //output fan pin to LOW
 
 }
 
@@ -296,18 +297,21 @@ void EnvironmentreadTemperature(volatile unsigned int temtempurature){
     return temptempurature;
 }
 
-#define PIN_FAN 4 //Turns Fan ON and OFF
+//#define PIN_FAN 4 //Turns Fan ON and OFF
+volatile unsigned char *portDigFan = (unsigned char*)  0x01;
+*portDigFan |= 0x40; //output fan pin to LOW
+*portDigFan ^= 0x40; // XOR to toggle on
 int  fanControl(){
 
   temp = EnvironmentreadTemperature(); //READS TEMPERATURE
 
   if(temp >> 23){
-    digitalWrite(PIN_FAN, HIGH); //Sends power to relay to popwer DC fan motor from external power source
+   *portDigFan ^= 0x40; // XOR to toggle on, Sends power to relay to popwer DC fan motor from external power source
   *GREEN &= ~(1 << PE3); //turns off green LED
   *BLUE |= (1 << PG5); //turns on blue LED
   }
   else(){
-    digitalWrite(PIN_FAN, LOW)
+  *portDigFan |= 0x40; //output fan pin to LOW
   *BLUE &= ~(1 << PG5); //turns off blue LED
   *GREEN |= (1 << PE3); //turns on green LED
   }
