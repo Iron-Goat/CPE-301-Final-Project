@@ -1,5 +1,5 @@
-// Final Poject Code v5
-// 4/25/24
+// Final Poject Code v6
+// 5/12/24
 
 //##################################################################################
 // ---NAMES---
@@ -102,11 +102,11 @@ EIMSK |= (1 << INTO); //Sets interupt to pin 2
   Serial.begin(9600);
   //Environment.begin();
 
-  pinMode(PIN_UP, INPUT);
-  pinMode(PIN_DOWN, INPUT);
-  pinMode(PIN_SERVO_POW, OUTPUT);
+  //pinMode(PIN_UP, INPUT);
+  //pinMode(PIN_DOWN, INPUT);
+  //pinMode(PIN_SERVO_POW, OUTPUT);
   myservo.attach(11);
-  pinMode(PIN_FAN, OUTPUT);
+  //pinMode(PIN_FAN, OUTPUT);
   
   //sets up pins for lights
 DDRH |= (1 << PH4); //sets PIN 7 as an output for yellow
@@ -227,7 +227,7 @@ lcd.setCursor(0, 1);
 
 void Clock(){
 
-DateTime time = rct.now();
+DateTime Time = rct.now();
 
 Serial.printLn(Time);
 Serial.print(time.hour(), DEC);
@@ -243,10 +243,6 @@ Serial.print(":");
 Serial.print(time.year(), DEC);
 
 }
-void time.hour(){}
-void time.day(){}
-void time.month(){}
-void time.year(){}
 
 void watersensor(){
     adc_read(1); //<-- Sets the input pin (A1)
@@ -293,12 +289,17 @@ void ventControl(){
 
 }
 
-void Environment.readTemperature(){}
+void EnvironmentreadTemperature(volatile unsigned int temtempurature){
+  adc_read()
+    temptempurature = *my_ADC_DATA;
+    adctoprint(tempteurature);
+    return temptempurature;
+}
 
 #define PIN_FAN 4 //Turns Fan ON and OFF
 int  fanControl(){
 
-  temp = Environment.readTemperature(); //READS TEMPERATURE
+  temp = EnvironmentreadTemperature(); //READS TEMPERATURE
 
   if(temp >> 23){
     digitalWrite(PIN_FAN, HIGH); //Sends power to relay to popwer DC fan motor from external power source
@@ -354,9 +355,14 @@ unsigned int adc_read(unsigned char adc_channel_num)
   return *my_ADC_DATA;
 }
 
-void Environment.readHumidity(){}
+void EnvironmentreadHumidity(volatile unsigned int temphumid){
+  adc_read(); //<-- Sets the input pin (A1)
+    temphumid = *my_ADC_DATA;
+    adctoprint(temphumid);
+    return temphumid;
+}
 
 int humidity(){
-  hum = Environment.readHumidity();
+  hum = EnvironmentreadHumidity();
   return hum;
 }
